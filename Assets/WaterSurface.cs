@@ -22,7 +22,7 @@ public class WaterSurface : MonoBehaviour
         mesh = GetComponent<MeshFilter>().mesh;
         mesh.name = "Surface Fluid";
 
-        // Find origin 
+        // Find origin
         // Make force (origin, time)
         // For every vertex, if distance between origin and vertex is equal
         // to time, then vertex.y += 1/time;
@@ -46,20 +46,23 @@ public class WaterSurface : MonoBehaviour
             verts[i] = new Vector3(i % (size + 1) + xOffset, 0 + yOffset, i / (size + 1));
             uv[i] = new Vector2((float)i % (float)(size+1) / (float)size, (float)i / (float)(size+1) / (float)size);
 
-            if (i < sizePower - 2)
+            if (i < sizePower)
             {
                 // Every quad is 6 points, first 3 points are the lower triangle
                 // second 3 points are bottom.
 
-                // Create lower triangle 
-                tris[i * 6] = i;
-                tris[i * 6 + 1] = i + size + 1;
-                tris[i * 6 + 2] = i + 1;
+                int indicesOffset = i * 6;
+                int vertexOffset = i + i / size;
+
+                // Create lower triangle
+                tris[indicesOffset + 0] = vertexOffset;
+                tris[indicesOffset + 1] = vertexOffset + size + 1;
+                tris[indicesOffset + 2] = vertexOffset + 1;
 
                 // Create upper triangle
-                tris[i * 6 + 3] = i + size + 1;
-                tris[i * 6 + 4] = i + size + 2;
-                tris[i * 6 + 5] = i + 1;
+                tris[indicesOffset + 3] = vertexOffset + size + 1;
+                tris[indicesOffset + 4] = vertexOffset + size + 2;
+                tris[indicesOffset + 5] = vertexOffset + 1;
             }
         }
 
@@ -70,6 +73,10 @@ public class WaterSurface : MonoBehaviour
 
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
+
+        if (GetComponent<BoxCollider>() == null) {
+            gameObject.AddComponent<BoxCollider>();
+        }
 
         step++;
 	}
